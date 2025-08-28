@@ -1,0 +1,186 @@
+.data
+
+	#mensagens
+msg1:	.asciiz		"	--calculadora--"	
+msg2:	.asciiz		"digite o primeiro digito:"
+msg3:	.asciiz		"digite o segundo digito:"
+msg4:	.asciiz		"digite (+) para soma"
+msg5:	.asciiz		"digite (-) para subtracao"
+msg6:	.asciiz		"digite (/) para divisao"
+msg7:	.asciiz		"digite (*) para multiplicacao"
+msg8:	.asciiz		"Resultado:"
+msg9:	.asciiz		"digite 1 para reiniciar ou" 
+msg10:	.asciiz		"digite 0 para fechar o programa"
+msg11:	.asciiz		"erro na digitacao, voltando ao comeco do programa"
+
+.text
+
+erro:
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	la $a0, msg11
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	j inicio
+
+main:
+
+inicio:
+	
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+
+	#mensagem 1
+	la $a0, msg1
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	
+	#mensagem 2
+	la $a0, msg2
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	
+	#scan variavel
+	li $v0, 5
+	syscall
+	move $t1, $v0	#variavel em $t1
+	
+	#mensagem 3
+	la $a0, msg3
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	
+	#scan variavel
+	li $v0, 5
+	syscall
+	move $t2, $v0	#variavel em $t2
+	
+	#mensagem 4
+	la $a0, msg4
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	
+	#mensagem 5
+	la $a0, msg5
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	
+	#mensagem 6
+	la $a0, msg6
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	
+	#mensagem 7
+	la $a0, msg7
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+
+	#scan de char op
+	li $v0, 12
+	syscall
+	move $t3, $v0		#variavel em $t3
+	
+	#chars de escolha
+	li $t4, '+'		#$t4 = '+'
+	li $t5, '-'		#$t5 = '-'
+	li $t6, '/'		#$t6 = '/'
+	li $t7, '*'		#$t7 = '*'
+	
+	#if statements
+	beq $t3, $t4, soma
+	beq $t3, $t5, subtracao
+	beq $t3, $t6, divisao
+	beq $t3, $t7, multiplicacao
+	j erro
+	
+	#operacaoes
+	soma:
+	add $t0, $t1, $t2	# $t0 = %t1 + $t2
+	j resultado
+	
+	subtracao:
+	sub $t0, $t1, $t2	# $t0 = %t1 - $t2
+	j resultado
+	
+	divisao:
+	div $t1, $t2	# $t0 = %t1/$t2
+	mflo $t0	# pegar resultado da divisao
+	j resultado
+	
+	multiplicacao:
+	mul $t0, $t1, $t2	# $t0 = %t1 * $t2
+	j resultado
+	
+	resultado:
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	la $a0, msg8
+	li $v0, 4
+	syscall
+	move $a0, $t0
+	li $v0, 1
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	
+	#repeticao do programa
+	
+	#mensgaem para usuario
+	la $a0, msg9
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	la $a0, msg10
+	li $v0, 4
+	syscall
+	li $a0, 10
+	li $v0, 11	#\0
+	syscall
+	
+	#scan
+	li $v0, 12
+	syscall
+	move $t3, $v0		#variavel em $t3
+	
+	#chars de escolha
+	li $t4, '1'		#$t4 = '1'
+	li $t5, '0'		#$t5 = '0'
+	
+	#comparacao
+	beq $t3, $t4, inicio
+	beq $t3, $t5, fim
+	j erro
+	
+	fim:
+	li $v0, 10
+	syscall
